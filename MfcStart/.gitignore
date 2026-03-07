@@ -1,0 +1,74 @@
+# Visual Studio generated files
+.vs/
+
+# User-specific files
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Visual Studio cache/options
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+*.VC.opendb
+ipch/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Compiled files
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.log
+*.tlog
+*.res
+*.idb
+*.exp
+*.lib
+*.exe
+*.dll
+
+# NuGet
+packages/
+
+# Build logs
+*.lastbuildstate
+*.exe.recipe
+vcpkg.applocal.log
+
+# IntelliSense
+*.vsidx
+
+# Copilot indices
+CopilotIndices/

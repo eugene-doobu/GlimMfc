@@ -22,7 +22,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectGuid>{FE8B943E-7003-B394-5231-CDF14BE9153F}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>MfcStart</RootNamespace>
+    <RootNamespace>CircleExam</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -184,15 +184,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
-    <ClInclude Include="MfcStart.h" />
-    <ClInclude Include="MfcStartDlg.h" />
+    <ClInclude Include="CircleExam.h" />
+    <ClInclude Include="CircleExamDlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MfcStart.cpp" />
-    <ClCompile Include="MfcStartDlg.cpp" />
+    <ClCompile Include="CircleExam.cpp" />
+    <ClCompile Include="CircleExamDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -201,13 +201,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MfcStart.rc" />
+    <ResourceCompile Include="CircleExam.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MfcStart.rc2" />
+    <None Include="res\CircleExam.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\MfcStart.ico" />
+    <Image Include="res\CircleExam.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

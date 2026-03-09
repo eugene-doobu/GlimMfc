@@ -17,7 +17,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// «—±πæÓ(¥Î«—πŒ±π) resources
+// ÌïúÍµ≠Ïñ¥(ÎåÄÌïúÎØºÍµ≠) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
 LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
@@ -52,10 +52,10 @@ BEGIN
     "\r\n"
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)\r\n"
     "LANGUAGE 18, 1\r\n"
-    "#include ""res\\CircleExam.rc2""  // Microsoft Visual C++ ¿Ãø‹¿« ¥Ÿ∏• µµ±∏ø°º≠ ∆Ì¡˝«— ∏Æº“Ω∫¿‘¥œ¥Ÿ.\r\n"
-    "#include ""l.KOR\\afxres.rc""      // «•¡ÿ ±∏º∫ ø‰º“\r\n"
+    "#include ""res\\CircleExam.rc2""  // Microsoft Visual C++ Ïù¥Ïô∏Ïùò Îã§Î•∏ ÎèÑÍµ¨ÏóêÏÑú Ìé∏ÏßëÌïú Î¶¨ÏÜåÏä§ÏûÖÎãàÎã§.\r\n"
+    "#include ""l.KOR\\afxres.rc""      // ÌëúÏ§Ä Íµ¨ÏÑ± ÏöîÏÜå\r\n"
     "#if !defined(_AFXDLL)\r\n"
-    "#include ""l.KOR\\afxribbon.rc""   // MFC ∏Æ∫ª π◊ ƒ¡∆Æ∑— ∏∑¥Î ∏Æº“Ω∫\r\n"
+    "#include ""l.KOR\\afxribbon.rc""   // MFC Î¶¨Î≥∏ Î∞è Ïª®Ìä∏Î°§ ÎßâÎåÄ Î¶¨ÏÜåÏä§\r\n"
     "#endif\r\n"
     "#endif\r\n"
     "\0"
@@ -81,25 +81,36 @@ IDR_MAINFRAME           ICON                    "res\\CircleExam.ico"
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "CircleExam ¡§∫∏"
+CAPTION "CircleExam Ï†ïÎ≥¥"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
-    LTEXT           "CircleExam, πˆ¿¸ 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "CircleExam, Î≤ÑÏ†Ñ 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2026",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "»Æ¿Œ",IDOK,113,41,50,14,WS_GROUP
+    DEFPUSHBUTTON   "ÌôïÏù∏",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_CIRCLEEXAM_DIALOG DIALOGEX 0, 0, 320, 200
+IDD_CIRCLEEXAM_DIALOG DIALOGEX 0, 0, 860, 540
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
+CAPTION "CircleExam"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "»Æ¿Œ",IDOK,209,179,50,14
-    PUSHBUTTON      "√Îº“",IDCANCEL,263,179,50,14
-    CTEXT           "TODO: ø©±‚ø° ¥Î»≠ ªÛ¿⁄ ƒ¡∆Æ∑—¿ª πËƒ°«’¥œ¥Ÿ.",IDC_STATIC,7,123,300,8
-    PUSHBUTTON      "Test Btn",IDC_BTN_TEST,262,7,51,34
-    EDITTEXT        IDC_EDIT_NUM,186,7,51,34,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Point Radius",IDC_STATIC_RADIUS_LABEL,715,16,58,8
+    EDITTEXT        IDC_EDIT_RADIUS,780,14,45,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Outline Thickness",IDC_STATIC_THICKNESS_LABEL,715,34,60,8
+    EDITTEXT        IDC_EDIT_THICKNESS,780,32,45,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "P1: (-, -)",IDC_STATIC_P1,715,62,90,8
+    LTEXT           "P2: (-, -)",IDC_STATIC_P2,715,78,90,8
+    LTEXT           "P3: (-, -)",IDC_STATIC_P3,715,94,90,8
+    PUSHBUTTON      "Reset",IDC_BTN_RESET,715,118,50,14
+    PUSHBUTTON      "Random Move",IDC_BTN_RANDOM,770,118,58,14
+END
+
+IDD_DLGIMAGE DIALOGEX 0, 0, 300, 200
+STYLE DS_CONTROL | DS_SETFONT | WS_CHILD | WS_BORDER
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
 END
 
 
@@ -125,13 +136,13 @@ BEGIN
     BEGIN
         BLOCK "041204B0"
         BEGIN
-            VALUE "CompanyName", "TODO: <»∏ªÁ ¿Ã∏ß>"
+            VALUE "CompanyName", "TODO: <ÌöåÏÇ¨ Ïù¥Î¶Ñ>"
             VALUE "FileDescription", "CircleExam"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "CircleExam.exe"
-            VALUE "LegalCopyright", "TODO: (c) <»∏ªÁ ¿Ã∏ß>.  All rights reserved."
+            VALUE "LegalCopyright", "TODO: (c) <ÌöåÏÇ¨ Ïù¥Î¶Ñ>.  All rights reserved."
             VALUE "OriginalFilename", "CircleExam.exe"
-            VALUE "ProductName", "TODO: <¡¶«∞ ¿Ã∏ß>"
+            VALUE "ProductName", "TODO: <Ï†úÌíà Ïù¥Î¶Ñ>"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -161,7 +172,15 @@ BEGIN
     IDD_CIRCLEEXAM_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 313
+        RIGHTMARGIN, 853
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 533
+    END
+
+    IDD_DLGIMAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 293
         TOPMARGIN, 7
         BOTTOMMARGIN, 193
     END
@@ -179,6 +198,11 @@ BEGIN
     0
 END
 
+IDD_DLGIMAGE AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -187,10 +211,10 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_ABOUTBOX            "CircleExam ¡§∫∏(&A)..."
+    IDS_ABOUTBOX            "CircleExam Ï†ïÎ≥¥(&A)..."
 END
 
-#endif    // «—±πæÓ(¥Î«—πŒ±π) resources
+#endif    // ÌïúÍµ≠Ïñ¥(ÎåÄÌïúÎØºÍµ≠) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -207,13 +231,12 @@ END
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
 LANGUAGE 18, 1
-#include "res\CircleExam.rc2"  // Microsoft Visual C++ ¿Ãø‹¿« ¥Ÿ∏• µµ±∏ø°º≠ ∆Ì¡˝«— ∏Æº“Ω∫¿‘¥œ¥Ÿ.
-#include "l.KOR\afxres.rc"      // «•¡ÿ ±∏º∫ ø‰º“
+#include "res\CircleExam.rc2"  // Microsoft Visual C++ Ïù¥Ïô∏Ïùò Îã§Î•∏ ÎèÑÍµ¨ÏóêÏÑú Ìé∏ÏßëÌïú Î¶¨ÏÜåÏä§ÏûÖÎãàÎã§.
+#include "l.KOR\afxres.rc"      // ÌëúÏ§Ä Íµ¨ÏÑ± ÏöîÏÜå
 #if !defined(_AFXDLL)
-#include "l.KOR\afxribbon.rc"   // MFC ∏Æ∫ª π◊ ƒ¡∆Æ∑— ∏∑¥Î ∏Æº“Ω∫
+#include "l.KOR\afxribbon.rc"   // MFC Î¶¨Î≥∏ Î∞è Ïª®Ìä∏Î°§ ÎßâÎåÄ Î¶¨ÏÜåÏä§
 #endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

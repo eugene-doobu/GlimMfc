@@ -1,35 +1,32 @@
-
-// CircleExamDlg.cpp: 구현 파일
+//
+// CircleExamDlg.cpp: implementation file
 //
 
 #include "pch.h"
 #include "framework.h"
 #include "CircleExam.h"
 #include "CircleExamDlg.h"
+#include "DlgImage.h"
 #include "afxdialogex.h"
+
+#include <ctime>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #endif
-
-
-// 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
 class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
 
-// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
 
-// 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -46,14 +43,10 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-
-// CCircleExamDlg 대화 상자
-
-
-
 CCircleExamDlg::CCircleExamDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CIRCLEEXAM_DIALOG, pParent)
-	, m_nNum(100)
+	, m_pImgDlg(nullptr)
+	, m_bRandomMoving(FALSE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -61,34 +54,32 @@ CCircleExamDlg::CCircleExamDlg(CWnd* pParent /*=nullptr*/)
 void CCircleExamDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_NUM, m_nNum);
 }
 
 BEGIN_MESSAGE_MAP(CCircleExamDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_DOUBLECLICKED(IDC_BTN_TEST, &CCircleExamDlg::OnBnDoubleclickedBtnTest)
-	ON_BN_CLICKED(IDC_BTN_TEST, &CCircleExamDlg::OnBnClickedBtnTest)
+	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BTN_RESET, &CCircleExamDlg::OnBnClickedBtnReset)
+	ON_BN_CLICKED(IDC_BTN_RANDOM, &CCircleExamDlg::OnBnClickedBtnRandom)
+	ON_EN_CHANGE(IDC_EDIT_RADIUS, &CCircleExamDlg::OnEnChangeDrawingInput)
+	ON_EN_CHANGE(IDC_EDIT_THICKNESS, &CCircleExamDlg::OnEnChangeDrawingInput)
+	ON_COMMAND(ID_RANDOM_MOVE_STEP, &CCircleExamDlg::OnRandomMoveStep)
+	ON_COMMAND(ID_RANDOM_MOVE_DONE, &CCircleExamDlg::OnRandomMoveDone)
 END_MESSAGE_MAP()
-
-
-// CCircleExamDlg 메시지 처리기
 
 BOOL CCircleExamDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
-
-	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != nullptr)
 	{
-		BOOL bNameValid;
+		BOOL bNameValid = FALSE;
 		CString strAboutMenu;
 		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
 		ASSERT(bNameValid);
@@ -99,14 +90,27 @@ BOOL CCircleExamDlg::OnInitDialog()
 		}
 	}
 
-	// 이 대화 상자의 아이콘을 설정합니다.  응용 프로그램의 주 창이 대화 상자가 아닐 경우에는
-	//  프레임워크가 이 작업을 자동으로 수행합니다.
-	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
-	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
+	SetIcon(m_hIcon, TRUE);
+	SetIcon(m_hIcon, FALSE);
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	MoveWindow(80, 60, 1500, 910);
+	SetWindowText(_T("CircleExam"));
+	srand((unsigned int)time(NULL));
 
-	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
+	SetDlgItemInt(IDC_EDIT_RADIUS, DEFAULT_POINT_RADIUS, FALSE);
+	SetDlgItemInt(IDC_EDIT_THICKNESS, DEFAULT_CIRCLE_THICKNESS, FALSE);
+
+	m_pImgDlg = new CDlgImage(this);
+	if (m_pImgDlg != nullptr)
+	{
+		m_pImgDlg->Create(IDD_DLGIMAGE, this);
+		m_pImgDlg->ShowWindow(SW_SHOW);
+		m_pImgDlg->MoveWindow(20, 20, 1200, 800);
+	}
+
+	UpdatePointLabels(nullptr, 0);
+
+	return TRUE;
 }
 
 void CCircleExamDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -122,19 +126,14 @@ void CCircleExamDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// 대화 상자에 최소화 단추를 추가할 경우 아이콘을 그리려면
-//  아래 코드가 필요합니다.  문서/뷰 모델을 사용하는 MFC 애플리케이션의 경우에는
-//  프레임워크에서 이 작업을 자동으로 수행합니다.
-
 void CCircleExamDlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+		CPaintDC dc(this);
 
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -142,7 +141,6 @@ void CCircleExamDlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// 아이콘을 그립니다.
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -151,23 +149,156 @@ void CCircleExamDlg::OnPaint()
 	}
 }
 
-// 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서
-//  이 함수를 호출합니다.
 HCURSOR CCircleExamDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-#include <iostream>
-void CCircleExamDlg::OnBnDoubleclickedBtnTest()
+void CCircleExamDlg::OnDestroy()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CDialogEx::OnDestroy();
+
+	if (m_pImgDlg != nullptr)
+	{
+		if (::IsWindow(m_pImgDlg->GetSafeHwnd()))
+		{
+			m_pImgDlg->DestroyWindow();
+		}
+		delete m_pImgDlg;
+		m_pImgDlg = nullptr;
+	}
 }
 
-void CCircleExamDlg::OnBnClickedBtnTest()
+void CCircleExamDlg::OnBnClickedBtnReset()
 {
-	m_nNum = 200;
-	std::cout << m_nNum << std::endl;
-	UpdateData(false);
+	if (m_pImgDlg != nullptr)
+	{
+		m_pImgDlg->ResetState();
+	}
+}
+
+void CCircleExamDlg::OnBnClickedBtnRandom()
+{
+	if (m_bRandomMoving || m_pImgDlg == nullptr || !m_pImgDlg->HasThreePoints())
+	{
+		return;
+	}
+
+	m_bRandomMoving = TRUE;
+	SetActionButtonsEnabled(FALSE);
+
+	if (AfxBeginThread(RandomMoveThread, GetSafeHwnd()) == nullptr)
+	{
+		m_bRandomMoving = FALSE;
+		SetActionButtonsEnabled(TRUE);
+	}
+}
+
+void CCircleExamDlg::OnEnChangeDrawingInput()
+{
+	if (m_pImgDlg != nullptr)
+	{
+		m_pImgDlg->Redraw();
+	}
+}
+
+void CCircleExamDlg::OnRandomMoveStep()
+{
+	if (m_pImgDlg != nullptr)
+	{
+		m_pImgDlg->RandomizePoints();
+	}
+}
+
+void CCircleExamDlg::OnRandomMoveDone()
+{
+	m_bRandomMoving = FALSE;
+	SetActionButtonsEnabled(TRUE);
+}
+
+UINT CCircleExamDlg::RandomMoveThread(LPVOID pParam)
+{
+	HWND hWnd = (HWND)pParam;
+	if (hWnd == NULL)
+	{
+		return 0;
+	}
+
+	for (int i = 0; i < 10; ++i)
+	{
+		if (!::IsWindow(hWnd))
+		{
+			return 0;
+		}
+
+		::PostMessage(hWnd, WM_COMMAND, ID_RANDOM_MOVE_STEP, 0);
+		::Sleep(500);
+	}
+
+	if (::IsWindow(hWnd))
+	{
+		::PostMessage(hWnd, WM_COMMAND, ID_RANDOM_MOVE_DONE, 0);
+	}
+
+	return 0;
+}
+
+int CCircleExamDlg::GetPointRadius() const
+{
+	return GetPositiveEditInt(IDC_EDIT_RADIUS, DEFAULT_POINT_RADIUS);
+}
+
+int CCircleExamDlg::GetCircleThickness() const
+{
+	return GetPositiveEditInt(IDC_EDIT_THICKNESS, DEFAULT_CIRCLE_THICKNESS);
+}
+
+void CCircleExamDlg::UpdatePointLabels(const CPoint* pts, int count)
+{
+	SetPointLabel(IDC_STATIC_P1, _T("P1"), count > 0 ? &pts[0] : nullptr);
+	SetPointLabel(IDC_STATIC_P2, _T("P2"), count > 1 ? &pts[1] : nullptr);
+	SetPointLabel(IDC_STATIC_P3, _T("P3"), count > 2 ? &pts[2] : nullptr);
+}
+
+void CCircleExamDlg::SetPointLabel(int controlId, LPCTSTR prefix, const CPoint* pt)
+{
+	CString text;
+	if (pt != nullptr)
+	{
+		text.Format(_T("%s: (%d, %d)"), prefix, pt->x, pt->y);
+	}
+	else
+	{
+		text.Format(_T("%s: (-, -)"), prefix);
+	}
+
+	SetDlgItemText(controlId, text);
+}
+
+int CCircleExamDlg::GetPositiveEditInt(int controlId, int defaultValue) const
+{
+	BOOL translated = FALSE;
+	const UINT value = GetDlgItemInt(controlId, &translated, FALSE);
+	if (!translated || value == 0)
+	{
+		return defaultValue;
+	}
+
+	return static_cast<int>(value);
+}
+
+void CCircleExamDlg::SetActionButtonsEnabled(BOOL bEnable)
+{
+	CWnd* pReset = GetDlgItem(IDC_BTN_RESET);
+	CWnd* pRandom = GetDlgItem(IDC_BTN_RANDOM);
+
+	if (pReset != nullptr)
+	{
+		pReset->EnableWindow(bEnable);
+	}
+
+	if (pRandom != nullptr)
+	{
+		pRandom->EnableWindow(bEnable);
+	}
 }

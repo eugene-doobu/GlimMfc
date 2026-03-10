@@ -10,10 +10,35 @@
 #include "afxdialogex.h"
 
 #include <ctime>
+#include <thread>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+void threadRandomMove(HWND hWnd)
+{
+	if (hWnd == NULL)
+	{
+		return;
+	}
+
+	for (int i = 0; i < 10; ++i)
+	{
+		if (!::IsWindow(hWnd))
+		{
+			return;
+		}
+
+		::PostMessage(hWnd, WM_COMMAND, ID_RANDOM_MOVE_STEP, 0);
+		::Sleep(500);
+	}
+
+	if (::IsWindow(hWnd))
+	{
+		::PostMessage(hWnd, WM_COMMAND, ID_RANDOM_MOVE_DONE, 0);
+	}
+}
 
 class CAboutDlg : public CDialogEx
 {
@@ -187,11 +212,8 @@ void CCircleExamDlg::OnBnClickedBtnRandom()
 	m_bRandomMoving = TRUE;
 	SetActionButtonsEnabled(FALSE);
 
-	if (AfxBeginThread(RandomMoveThread, GetSafeHwnd()) == nullptr)
-	{
-		m_bRandomMoving = FALSE;
-		SetActionButtonsEnabled(TRUE);
-	}
+	std::thread _thread0(threadRandomMove, GetSafeHwnd());
+	_thread0.detach();
 }
 
 void CCircleExamDlg::OnEnChangeDrawingInput()
@@ -214,33 +236,6 @@ void CCircleExamDlg::OnRandomMoveDone()
 {
 	m_bRandomMoving = FALSE;
 	SetActionButtonsEnabled(TRUE);
-}
-
-UINT CCircleExamDlg::RandomMoveThread(LPVOID pParam)
-{
-	HWND hWnd = (HWND)pParam;
-	if (hWnd == NULL)
-	{
-		return 0;
-	}
-
-	for (int i = 0; i < 10; ++i)
-	{
-		if (!::IsWindow(hWnd))
-		{
-			return 0;
-		}
-
-		::PostMessage(hWnd, WM_COMMAND, ID_RANDOM_MOVE_STEP, 0);
-		::Sleep(500);
-	}
-
-	if (::IsWindow(hWnd))
-	{
-		::PostMessage(hWnd, WM_COMMAND, ID_RANDOM_MOVE_DONE, 0);
-	}
-
-	return 0;
 }
 
 int CCircleExamDlg::GetPointRadius() const

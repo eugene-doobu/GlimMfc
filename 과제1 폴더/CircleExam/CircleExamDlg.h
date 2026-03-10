@@ -43,8 +43,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	static UINT RandomMoveThread(LPVOID pParam);
-
 	void SetPointLabel(int controlId, LPCTSTR prefix, const CPoint* pt);
 	int GetPositiveEditInt(int controlId, int defaultValue) const;
 	void SetActionButtonsEnabled(BOOL bEnable);
